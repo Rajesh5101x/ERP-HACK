@@ -39,6 +39,21 @@ def webhook():
     return "ok"
 
 
+@app.get("/check")
+def check_roll():
+    roll_no = request.args.get("roll")
+
+    if not roll_no:
+        return "❌ Please provide ?roll=ROLLNUMBER", 400
+
+    marks = get_marks(roll_no)
+
+    if marks is None:
+        return "❌ No exam data found for this roll number", 404
+
+    return marks
+
+
 
 def format_marks(all_marks):
     output = "📘 *Exam Marks Report*\n\n"
