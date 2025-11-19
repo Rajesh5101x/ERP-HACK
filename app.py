@@ -128,6 +128,8 @@ def get_marks(roll_no):
 
     return all_marks
 
+from flask import Flask, request, jsonify
+
 
 @app.get("/fetch")
 def fetch_marks():
