@@ -129,6 +129,57 @@ def get_marks(roll_no):
     return all_marks
 
 
+@app.get("/fetch")
+def fetch_marks():
+    roll = request.args.get("roll")
+    if not roll:
+        return jsonify({"error": "Roll number required"}), 400
+
+    # Step 1 → Get exam schedule
+    try:
+        payload1 = {
+            "filterForStudentExamReport": {
+                "intSemester": -1,
+                "vchRollNo": roll,
+                "intExamTypeID": 0
+            }
+        }
+        r1 = requests.post("https://gietuerp.in/ExamReport/GetAllScheduledExamForStudents", json=payload1)
+        schedule_data = r1.json()
+
+        if not schedule_data.get("data"):
+            return jsonify({"error": "No exam schedule found"}), 404
+
+        student_id = schedule_data["data"][0]["intStudentID"]
+        schedule_ids = [x["intExamScheduleMasterID"] for x in schedule_data["data"]]
+
+        all_marks = []
+
+        # Step 2 → Loop through all schedule IDs
+        for sid in schedule_ids:
+            payload2 = {
+                "intExamScheduleMasterID": sid,
+                "intStudentID": student_id
+            }
+            r2 = requests.post("https://gietuerp.in/ExamReport/GetAllSubjectMarksForStudents", json=payload2)
+            marks = r2.json()
+
+            all_marks.append({
+                "examID": sid,
+                "marks": marks.get("data", [])
+            })
+
+        return jsonify({
+            "roll": roll,
+            "studentID": student_id,
+            "examCount": len(all_marks),
+            "marksReport": all_marks
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 if __name__ == "__main__":
     app.run()
