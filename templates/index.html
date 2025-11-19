@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GIET Marks Fetcher</title>
+</head>
+<body>
+
+<h2>Enter Roll Number</h2>
+<input type="text" id="roll" placeholder="24CSEAIML015">
+<button onclick="getMarks()">Fetch Marks</button>
+
+<pre id="output"></pre>
+
+<script>
+function getMarks() {
+    const roll = document.getElementById("roll").value;
+    const output = document.getElementById("output");
+
+    output.textContent = "Fetching...";
+
+    fetch(`https://erp-hack.onrender.com/fetch?roll=${roll}`)
+        .then(res => res.json())
+        .then(data => {
+            output.textContent = JSON.stringify(data, null, 4);
+        })
+        .catch(err => {
+            output.textContent = "Error: " + err;
+        });
+}
+</script>
+
+</body>
+</html>
