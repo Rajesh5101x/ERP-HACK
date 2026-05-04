@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Dashboard</title></head>
+<body style="background:#121212; color:white; text-align:center; padding:50px;">
+    <h2>Data Extractor</h2>
+    <input type="text" id="sid" placeholder="Enter Numeric Student ID">
+    <button onclick="fetchData()">Get Result</button>
+    <pre id="res" style="text-align:left; background:#000; padding:20px; margin-top:20px;"></pre>
+    <script>
+        async function fetchData() {
+            const sid = document.getElementById('sid').value;
+            const res = await fetch('/get_profile/' + sid);
+            const data = await res.json();
+            document.getElementById('res').innerText = JSON.stringify(data, null, 4);
+        }
+    </script>
+</body>
+</html>

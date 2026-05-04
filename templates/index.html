@@ -1,33 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>GIET Marks Fetcher</title>
-</head>
-<body>
-
-<h2>Enter Roll Number</h2>
-<input type="text" id="roll" placeholder="24CSEAIML015">
-<button onclick="getMarks()">Fetch Marks</button>
-
-<pre id="output"></pre>
-
-<script>
-function getMarks() {
-    const roll = document.getElementById("roll").value;
-    const output = document.getElementById("output");
-
-    output.textContent = "Fetching...";
-
-    fetch(`https://erp-hack.onrender.com/fetch?roll=${roll}`)
-        .then(res => res.json())
-        .then(data => {
-            output.textContent = JSON.stringify(data, null, 4);
-        })
-        .catch(err => {
-            output.textContent = "Error: " + err;
-        });
-}
-</script>
-
+<head><title>Login</title></head>
+<body style="background:#121212; color:white; text-align:center; padding:50px;">
+    <h2>ERP Captcha Login</h2>
+    <img src="/captcha_image" onclick="this.src='/captcha_image?'+Date.now()" style="cursor:pointer; border:1px solid #444;">
+    <form id="lForm">
+        <input type="text" name="captcha" placeholder="Enter Captcha" style="margin:10px; padding:10px;">
+        <button type="submit" style="padding:10px;">Login</button>
+    </form>
+    <script>
+        document.getElementById('lForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const res = await fetch('/login', { method: 'POST', body: new FormData(e.target) });
+            const data = await res.json();
+            if(data.status === 'success') window.location.href = '/dashboard';
+            else alert(data.message);
+        };
+    </script>
 </body>
 </html>
